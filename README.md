@@ -1,5 +1,5 @@
 #RawImageProcessor
-##Image Processing Course - HW1
+Image Processing Course - HW1
 
-target: Win32 Application (Console)<br/>
-tool:   Microsoft Visual Studio 2015 (v140)
+Target: Win32 Application (Console)<br/>
+Tool:   Microsoft Visual Studio 2015 (v140)

@@ -152,6 +152,9 @@
   <ItemGroup>
     <ClInclude Include="RawImageProcessor.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="lena_512x512.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

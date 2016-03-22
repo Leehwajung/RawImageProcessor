@@ -1,61 +1,91 @@
 #include <stdio.h>
+#include <Windows.h>
 #include "RawImageProcessor.h"
 
 // Raw image size
 #define HEIGHT	512
 #define WIDTH	512
 
-// Raw image file name
-#define OUTPUTFILENAME	"rawImage.raw"
+// Image file names
+#define RAWFILENAME	"rawImage.raw"
+#define REFFILENAME	"lena_512x512.bmp"
+#define BMPFILENAME	"bmpImage.bmp"
 
-int genrateRawImageOfQ1(brt2Darr rawArr);
-void fillWithBrightnessOfQ1(brt brightnessArray[]);
+// Prototypes
+int genrateRawImageOfProblem1(brt2Darr rawArray);
+void fillWithBrightnessOfProblem1(brt brightnessArray[]);
 
 int main(void) {
 	
-	// 1. Generate the 512¡¿512 raw image.
+	int errCode = 0;
+
+	/*** 1. Generate the 512¡¿512 RAW image. ***/
 	brt rawArr[HEIGHT][WIDTH];
 
-	if (genrateRawImageOfQ1((brt2Darr)rawArr)) {
-		fprintf_s(stderr, "File open error!\n");
-		return 1;
+	errCode = genrateRawImageOfProblem1((brt2Darr)rawArr);
+	if (errCode) {
+		fprintf_s(stderr, "genrateRawImageOfProblem1() error [code: %d]\n", errCode);
+		return errCode;
 	}
 
-	printf_s("Raw image is created.\n");
+	printf_s("RAW image is created. (%s)\n\n", RAWFILENAME);
 
+
+	/*** 2. Generate a BMP image from RAW image of Problem 1. ***/
+	BITMAPFILEHEADER hf;
+	BITMAPINFOHEADER hInfo;
+	RGBQUAD hRGB[256];
+
+	errCode = getHeaderFromBMP(REFFILENAME, &hf, &hInfo, hRGB);	// Get BMP header
+	if (errCode) {
+		fprintf_s(stderr, "getHeaderFromBmp() error [code: %d]\n", errCode);
+		return errCode;
+	}
+	printf_s("Reading BMP header is completed. (%s)\n", REFFILENAME);
+	printf_s("Image Size: (%3dx%3d)\n", hInfo.biWidth, hInfo.biHeight);
+	printf_s("Pallete Type: %dbit Colors\n", hInfo.biBitCount);
+	printf_s("Pixel Data Size: %d Bytes\n\n", hInfo.biSizeImage);
+	
+	errCode = convertRAWtoBMP(RAWFILENAME, BMPFILENAME, &hf, &hInfo, hRGB);
+	if (errCode) {
+		fprintf_s(stderr, "convertRawToBmp() error [code: %d]\n", errCode);
+		return errCode;
+	}
+
+	printf_s("BMP image is created. (%s)\n\n", BMPFILENAME);
 
 	return 0;
 }
 
 /**
  * ### CAUTION ###
- *	Width size of rawArr must be greater than or equal to 512!
+ *	Width size of rawArray must be greater than or equal to 512!
  * 
  * ### return ###
  *	0: normal finish
  *	1: file open error
  */
-int genrateRawImageOfQ1(brt2Darr rawArr) {
+int genrateRawImageOfProblem1(brt2Darr rawArray) {
 
 	brt brtArr[WIDTH];
 	int i, j;
 
-	fillWithBrightnessOfQ1(brtArr);
+	fillWithBrightnessOfProblem1(brtArr);
 
 	for (i = 0; i < WIDTH; i++) {		// width
 		for (j = 0; j < HEIGHT; j++) {	// height
-			rawArr[j * WIDTH + i] = brtArr[i];
+			rawArray[j * WIDTH + i] = brtArr[i];
 		}
 	}
 
-	return writeToRawImage(OUTPUTFILENAME, rawArr, WIDTH, HEIGHT);
+	return writeToRAW(RAWFILENAME, rawArray, WIDTH, HEIGHT);
 }
 
 /**
  * ### CAUTION ###
- *	Width size of rawArr must be greater than or equal to 512!
+ *	Size of brightnessArray must be greater than or equal to 512!
  */
-void fillWithBrightnessOfQ1(brt brightnessArray[]) {
+void fillWithBrightnessOfProblem1(brt brightnessArray[]) {
 
 	int i = 0;
 
