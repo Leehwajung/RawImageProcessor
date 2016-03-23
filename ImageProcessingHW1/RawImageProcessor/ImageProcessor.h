@@ -13,6 +13,7 @@
 #define BIHNULL		5	// LPBITMAPINFOHEADER arg is NULL
 #define PALNULL		6	// Palette(RGBQUAD*) error
 #define MGNNULL		8	// magic number error (NOT 0x4D42)
+#define NOTSPRT		16	// not support 1-bit or 4-bits image
 
 // Prototypes
 /**
@@ -73,6 +74,7 @@ int convertRAWtoBMP(const char* rawFileName, const char* bmpFileName, const LPBI
  *	FPNULL1(1): source file open error
  *	FPNULL2(2): destination file open error
  *	MGNNULL(8): not bmp file (magic number error, NOT 0x4D42)
+ *	NOTSPRT(16): not support 1-bit or 4-bits image
  */
 int ratateBMP(const char* srcFileName, const char* dstFileName);
 

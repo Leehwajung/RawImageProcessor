@@ -22,7 +22,6 @@ int main(void) {
 		fprintf_s(stderr, "genrateRawImageOfProblem1() error [code: %d]\n", errCode);
 		return errCode;
 	}
-
 	printf_s("RAW image is created. (%s)\n\n", RAWFILENAME);
 
 
@@ -42,17 +41,15 @@ int main(void) {
 		fprintf_s(stderr, "convertRawToBmp() error [code: %d]\n", errCode);
 		return errCode;
 	}
-
 	printf_s("BMP image is created. (%s)\n\n", BMPFILENAME);
 
 
-	/*** 3. Rotate the BMP image of Problem 2. ***/
+	/*** 3. Rotate the BMP image of Problem 2 clockwise. ***/
 	errCode = ratateBMP(BMPFILENAME, ROTFILENAME);
 	if (errCode) {
 		fprintf_s(stderr, "ratateBMP() error [code: %d]\n", errCode);
 		return errCode;
 	}
-
 	printf_s("Rotated BMP image is created. (%s)\n\n", ROTFILENAME);
 
 	return 0;

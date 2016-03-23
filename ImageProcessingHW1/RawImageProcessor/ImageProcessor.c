@@ -24,8 +24,9 @@ int writeToRAW(const char* rawFileName, BYTE rawArray[], unsigned int arrSize) {
 	return NORMFIN;
 }
 
-int getBMPHeader(const char* bmpFileName,
-	LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, RGBQUAD bmpPalette[]) {
+int getBMPHeader(const char* bmpFileName, 
+		LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, 
+		RGBQUAD bmpPalette[]) {
 
 	FILE *ifp;
 	int errCode = 0;
@@ -45,8 +46,9 @@ int getBMPHeader(const char* bmpFileName,
 	return errCode;
 }
 
-int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
-		const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, const RGBQUAD bmpPalette[]) {
+int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName, 
+		const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, 
+		const RGBQUAD bmpPalette[]) {
 	
 	BYTE *pixelData;
 	FILE *ifp, *ofp;
@@ -69,9 +71,9 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 	pixelBufSize = pixelBufSize >= 1 ? pixelBufSize : 1;
 	pixelData = malloc(pixelBufSize * bmpInfoHeader->biSizeImage);
 	for (i = bmpInfoHeader->biHeight - 1; i >= 0; i--) {	// Up-down reverse
-		fread_s(&pixelData[i * pixelBufSize * bmpInfoHeader->biWidth], pixelBufSize * bmpInfoHeader->biWidth, pixelBufSize, bmpInfoHeader->biWidth, ifp);
+		fread_s(&pixelData[i * pixelBufSize * bmpInfoHeader->biWidth], 
+			pixelBufSize * bmpInfoHeader->biWidth, pixelBufSize, bmpInfoHeader->biWidth, ifp);
 	}
-
 	fclose(ifp);
 
 	// Write bmp image
@@ -99,15 +101,10 @@ int ratateBMP(const char* srcFileName, const char* dstFileName) {
 	int pixelBufSize;
 	int errCode = 0, i, j;
 
-	// Open input/output files
+	// Open input file
 	fopen_s(&ifp, srcFileName, "rb");
-	fopen_s(&ofp, dstFileName, "wb");
-
 	if (ifp == NULL) {
 		return FPNULL1;
-	}
-	if (ofp == NULL) {
-		return FPNULL2;
 	}
 
 	// Read source BMP header
@@ -116,28 +113,33 @@ int ratateBMP(const char* srcFileName, const char* dstFileName) {
 		fclose(ifp);
 		return errCode;
 	}
+	if (bih.biBitCount < 8) {	// Is pixel size greater than or equal to 8-bit?
+		fclose(ifp);
+		return NOTSPRT;	// Not support 1 - bit and 4 - bits image
+	}
 
 	// Rotate BMP image clockwise
 	pixelBufSize = bih.biBitCount / 8;
-	pixelBufSize = pixelBufSize >= 1 ? pixelBufSize : 1;	// For 1-bit or 4-bits image
 	pixelData = malloc(pixelBufSize * bih.biSizeImage);
 
 	tmpWidth = bih.biWidth;
 	bih.biWidth = bih.biHeight;
 	bih.biHeight = tmpWidth;
 
-	if (bih.biBitCount >= 8) {	// Is pixel size greater than or equal to 8-bit?
-		for (j = bih.biWidth - 1; j >= 0; j--) {
-			for (i = bih.biHeight - 1; i >= 0; i--) {
-				fread_s(&pixelData[(i * bih.biWidth + j) * pixelBufSize], pixelBufSize, pixelBufSize, 1, ifp);
-			}
+	for (j = bih.biWidth - 1; j >= 0; j--) {
+		for (i = bih.biHeight - 1; i >= 0; i--) {
+			fread_s(&pixelData[(i * bih.biWidth + j) * pixelBufSize], 
+				pixelBufSize, pixelBufSize, 1, ifp);
 		}
-	}
-	else {
-		// TODO: Support 1-bit and 4-bits image
 	}
 	fclose(ifp);
 	
+	// Open output file
+	fopen_s(&ofp, dstFileName, "wb");
+	if (ofp == NULL) {
+		return FPNULL2;
+	}
+
 	// Write destination bmp image
 	errCode = writeBMPHeader(ofp, &bfh, &bih, pal);	// Set BMP Header
 	if (!errCode) {
@@ -152,7 +154,8 @@ int ratateBMP(const char* srcFileName, const char* dstFileName) {
 }
 
 int readBMPHeader(FILE* bmpFilePointer,
-	LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, RGBQUAD bmpPalette[]) {
+		LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, 
+		RGBQUAD bmpPalette[]) {
 
 	// Check header arguments
 	if (!bmpFileHeader) {
@@ -163,16 +166,19 @@ int readBMPHeader(FILE* bmpFilePointer,
 	}
 
 	// Read header from bmp file
-	fread_s(bmpFileHeader, sizeof(BITMAPFILEHEADER), sizeof(BITMAPFILEHEADER), 1, bmpFilePointer); // Read file header
+	fread_s(bmpFileHeader, sizeof(BITMAPFILEHEADER), 
+		sizeof(BITMAPFILEHEADER), 1, bmpFilePointer);	// Read file header
 	if (bmpFileHeader->bfType != MAGICNUM) {	// Check magic number
 		return MGNNULL;
 	}
 
-	fread_s(bmpInfoHeader, sizeof(BITMAPINFOHEADER), sizeof(BITMAPINFOHEADER), 1, bmpFilePointer); // Read image header 
+	fread_s(bmpInfoHeader, sizeof(BITMAPINFOHEADER), 
+		sizeof(BITMAPINFOHEADER), 1, bmpFilePointer);	// Read image header 
 
-	if (bmpInfoHeader->biBitCount <= 8) {	// Has palette?
+	if (bmpInfoHeader->biBitCount <= 8) {		// Has palette?
 		if (bmpPalette) {
-			fread_s(bmpPalette, sizeof(RGBQUAD) * 256, sizeof(RGBQUAD), 256, bmpFilePointer);		// Read palette
+			fread_s(bmpPalette, sizeof(RGBQUAD) * 256, 
+				sizeof(RGBQUAD), 256, bmpFilePointer);	// Read palette
 		}
 		else {
 			return PALNULL;
@@ -183,7 +189,8 @@ int readBMPHeader(FILE* bmpFilePointer,
 }
 
 int writeBMPHeader(FILE* bmpFilePointer,
-	const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, const RGBQUAD bmpPalette[]) {
+		const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, 
+		const RGBQUAD bmpPalette[]) {
 
 	// Check header arguments
 	if (!bmpFileHeader) {
@@ -197,13 +204,16 @@ int writeBMPHeader(FILE* bmpFilePointer,
 	if (bmpFileHeader->bfType != MAGICNUM) {	// Check magic number
 		return MGNNULL;
 	}
-	fwrite(bmpFileHeader, sizeof(BYTE), sizeof(BITMAPFILEHEADER), bmpFilePointer); // Write file header
+	fwrite(bmpFileHeader, sizeof(BYTE), 
+		sizeof(BITMAPFILEHEADER), bmpFilePointer); // Write file header
 
-	fwrite(bmpInfoHeader, sizeof(BYTE), sizeof(BITMAPINFOHEADER), bmpFilePointer); // Write image header
+	fwrite(bmpInfoHeader, sizeof(BYTE), 
+		sizeof(BITMAPINFOHEADER), bmpFilePointer); // Write image header
 
-	if (bmpInfoHeader->biBitCount <= 8) {	// Has palette?
+	if (bmpInfoHeader->biBitCount <= 8) {		// Has palette?
 		if (bmpPalette) {
-			fwrite(bmpPalette, sizeof(RGBQUAD), 256, bmpFilePointer);				// Write palette
+			fwrite(bmpPalette, sizeof(RGBQUAD), 
+				256, bmpFilePointer);				// Write palette
 		}
 		else {
 			return PALNULL;
