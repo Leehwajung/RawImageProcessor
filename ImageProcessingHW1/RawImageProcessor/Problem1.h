@@ -1,5 +1,5 @@
 #pragma once
-#include "RawImageProcessor.h"
+#include "ImageProcessor.h"
 
 // Raw image size
 #define HEIGHT	512
@@ -11,13 +11,13 @@
  *	Width size of rawArray must be greater than or equal to 512!
  *
  * ### return ###
- *	0: normal finish
- *	1: file open error
+ *	NORMFIN(0): normal finish
+ *	FPNULL1(1): file open error
  */
-int genrateRawImageOfProblem1(brt2Darr rawArray, const char* rawFileName);
+int genrateRawImageOfProblem1(BYTE rawArray[HEIGHT][WIDTH], const char* rawFileName);
 
 /**
  * ### CAUTION ###
  *	Size of brightnessArray must be greater than or equal to 512!
  */
-void fillWithBrightnessOfProblem1(brt brightnessArray[]);
+void fillWithBrightnessOfProblem1(BYTE brightnessArray[]);

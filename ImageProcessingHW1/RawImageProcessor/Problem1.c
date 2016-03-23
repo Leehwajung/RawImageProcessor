@@ -1,24 +1,24 @@
 #include "Problem1.h"
 
-#include "RawImageProcessor.h"
+#include "ImageProcessor.h"
 
-int genrateRawImageOfProblem1(brt2Darr rawArray, const char* rawFileName) {
+int genrateRawImageOfProblem1(BYTE rawArray[HEIGHT][WIDTH], const char* rawFileName) {
 
-	brt brtArr[WIDTH];
+	BYTE brtArr[WIDTH];
 	int i, j;
 
 	fillWithBrightnessOfProblem1(brtArr);
 
 	for (i = 0; i < WIDTH; i++) {		// width
 		for (j = 0; j < HEIGHT; j++) {	// height
-			rawArray[j * WIDTH + i] = brtArr[i];
+			rawArray[j][i] = brtArr[i];
 		}
 	}
 
-	return writeToRAW(rawFileName, rawArray, WIDTH, HEIGHT);
+	return writeToRAW(rawFileName, (BYTE*)rawArray, WIDTH * HEIGHT);
 }
 
-void fillWithBrightnessOfProblem1(brt brightnessArray[]) {
+void fillWithBrightnessOfProblem1(BYTE brightnessArray[]) {
 
 	int i = 0;
 
@@ -29,17 +29,17 @@ void fillWithBrightnessOfProblem1(brt brightnessArray[]) {
 
 	// 100 < n < 200
 	for (i; i < 200; i++) {
-		brightnessArray[i] = (brt)(0.15 * i + 105);
+		brightnessArray[i] = (BYTE)(0.15 * i + 105);
 	}
 
 	// 200 <= n < 280
 	for (i; i < 280; i++) {
-		brightnessArray[i] = (brt)(1.125 * i - 90);
+		brightnessArray[i] = (BYTE)(1.125 * i - 90);
 	}
 
 	// 280 <= n < 300
 	for (i; i < 300; i++) {
-		brightnessArray[i] = (brt)(0.75 * i + 15);
+		brightnessArray[i] = (BYTE)(0.75 * i + 15);
 	}
 
 	// 300 <= n < 512

@@ -148,14 +148,19 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="Problem1.c" />
-    <ClCompile Include="RawImageProcessor.c" />
+    <ClCompile Include="ImageProcessor.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Problem1.h" />
-    <ClInclude Include="RawImageProcessor.h" />
+    <ClInclude Include="ImageProcessor.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bmpImage.bmp" />
     <Image Include="lena_512x512.bmp" />
+    <Image Include="rotated_bmpImage.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="rawImage.raw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
