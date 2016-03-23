@@ -45,9 +45,9 @@ int main(void) {
 
 
 	/*** 3. Rotate the BMP image of Problem 2 clockwise. ***/
-	errCode = ratateBMP(BMPFILENAME, ROTFILENAME);
+	errCode = rotateBMP(BMPFILENAME, ROTFILENAME);
 	if (errCode) {
-		fprintf_s(stderr, "ratateBMP() error [code: %d]\n", errCode);
+		fprintf_s(stderr, "rotateBMP() error [code: %d]\n", errCode);
 		return errCode;
 	}
 	printf_s("Rotated BMP image is created. (%s)\n\n", ROTFILENAME);

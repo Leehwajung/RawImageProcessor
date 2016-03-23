@@ -89,7 +89,7 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 	return errCode;
 }
 
-int ratateBMP(const char* srcFileName, const char* dstFileName) {
+int rotateBMP(const char* srcFileName, const char* dstFileName) {
 
 	BITMAPFILEHEADER bfh;	// Bitmap File Header
 	BITMAPINFOHEADER bih;	// Bitmap Info Header

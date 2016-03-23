@@ -76,7 +76,7 @@ int convertRAWtoBMP(const char* rawFileName, const char* bmpFileName, const LPBI
  *	MGNNULL(8): not bmp file (magic number error, NOT 0x4D42)
  *	NOTSPRT(16): not support 1-bit or 4-bits image
  */
-int ratateBMP(const char* srcFileName, const char* dstFileName);
+int rotateBMP(const char* srcFileName, const char* dstFileName);
 
 /**
  * ### param ###
