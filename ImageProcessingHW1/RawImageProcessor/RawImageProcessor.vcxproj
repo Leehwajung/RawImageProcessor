@@ -147,20 +147,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
-    <ClCompile Include="Problem1.c" />
     <ClCompile Include="ImageProcessor.c" />
+    <ClCompile Include="Problem1.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Problem1.h" />
     <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="Problem1.h" />
   </ItemGroup>
   <ItemGroup>
+    <Binary Include="rawImage.raw"/>
     <Image Include="bmpImage.bmp" />
     <Image Include="lena_512x512.bmp" />
     <Image Include="rotated_bmpImage.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="rawImage.raw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
