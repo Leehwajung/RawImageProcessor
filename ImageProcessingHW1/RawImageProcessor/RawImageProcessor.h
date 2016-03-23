@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 
 // Brightness Type
 typedef unsigned char brt;
@@ -7,9 +8,10 @@ typedef unsigned char brt;
 // Form: [Height][Width]
 typedef brt* brt2Darr;
 
+// Prototypes
 /**
  * ### param ###
- *	rawFileName: output RAW file name
+ *	rawFileName: output file name (RAW)
  *	rawArray: two dimensional array of brightness(brt)
  *	arrWidth: width of rawArray
  *	arrHeight: height of rawArray
@@ -22,7 +24,7 @@ int writeToRAW(const char* rawFileName, brt2Darr rawArray, unsigned int arrWidth
 
 /**
  * ### param ###
- *	bmpFileName: input BMP file name
+ *	bmpFileName: inpu file name (BMP)
  *	bmpFileHeader: (OUT PARAM) bitmap file header 
  *	bmpInfoHeader: (OUT PARAM) bitmap info header
  *	bmpPalette: (OUT PARAM) bitmap palette (NULL is possible if bmpInfoHeader has more than 8-bit colors.)
@@ -39,8 +41,8 @@ int getHeaderFromBMP(const char* bmpFileName, BITMAPFILEHEADER* bmpFileHeader, B
 
 /**
  * ### param ###
- *	rawFileName: input RAW file name
- *	bmpFileName: output BMP file name
+ *	rawFileName: input file name (RAW)
+ *	bmpFileName: output file name (BMP)
  *	bmpFileHeader: bitmap file header 
  *	bmpInfoHeader: bitmap info header
  *	bmpPalette: bitmap palette (NULL is possible if bmpInfoHeader has more than 8-bit colors.)

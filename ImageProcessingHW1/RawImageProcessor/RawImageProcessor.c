@@ -1,9 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <Windows.h>
 #include "RawImageProcessor.h"
 
-#define WIDTHBYTES(bits) (((bits)+31)/32*4) // 영상 가로길이는 4바이트의 배수여야 함
+#include <stdio.h>
+#include <stdlib.h>
 
 int writeToRAW(const char* rawFileName, brt2Darr rawArray, unsigned int arrWidth, unsigned int arrHeight) {
 
@@ -75,6 +73,7 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 		const BITMAPFILEHEADER* bmpFileHeader, const BITMAPINFOHEADER* bmpInfoHeader, const RGBQUAD bmpPalette[]) {
 
 	FILE *ifp, *ofp;
+	int i;
 
 	// Check header arguments
 	if (!bmpFileHeader) {
@@ -96,8 +95,10 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 	}
 
 	// Read raw image data
-	brt *lpImg = (brt*) malloc(sizeof(brt) * bmpInfoHeader->biSizeImage);
-	fread_s(lpImg, sizeof(brt) * bmpInfoHeader->biSizeImage, sizeof(brt), bmpInfoHeader->biSizeImage, ifp);
+	brt *pixelData = (brt*) malloc(sizeof(brt) * bmpInfoHeader->biSizeImage);
+	for (i = bmpInfoHeader->biHeight - 1; i >= 0; i--) {	// Up-down reverse
+		fread_s(&pixelData[i * bmpInfoHeader->biWidth], sizeof(brt) * bmpInfoHeader->biWidth, sizeof(brt), bmpInfoHeader->biWidth, ifp);
+	}
 	fclose(ifp);
 
 	// Write bmp image
@@ -111,11 +112,11 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 			return 6;
 		}
 	}
-	fwrite(lpImg, sizeof(brt), bmpInfoHeader->biSizeImage, ofp);
+	fwrite(pixelData, sizeof(brt), bmpInfoHeader->biSizeImage, ofp);
 	fclose(ofp);
 
 	// Deallocate memory
-	free(lpImg);
+	free(pixelData);
 
 	return 0;
 }

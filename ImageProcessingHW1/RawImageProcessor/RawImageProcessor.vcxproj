@@ -147,9 +147,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.c" />
+    <ClCompile Include="Problem1.c" />
     <ClCompile Include="RawImageProcessor.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Problem1.h" />
     <ClInclude Include="RawImageProcessor.h" />
   </ItemGroup>
   <ItemGroup>
