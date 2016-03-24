@@ -127,12 +127,13 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	bih.biWidth = bih.biHeight;
 	bih.biHeight = tmpWidth;
 
-	for (j = bih.biWidth - 1; j >= 0; j--) {
-		for (i = bih.biHeight - 1; i >= 0; i--) {
-			fread_s(&pixelData[(i * bih.biWidth + j) * pixelBufSize], 
+	for (i = 0; i < bih.biWidth; i++) {
+		for (j = bih.biHeight - 1; j >= 0; j--) {
+			fread_s(&pixelData[(i + j * bih.biWidth) * pixelBufSize],
 				pixelBufSize, pixelBufSize, 1, ifp);
 		}
 	}
+
 	fclose(ifp);
 	
 	// Open output file
