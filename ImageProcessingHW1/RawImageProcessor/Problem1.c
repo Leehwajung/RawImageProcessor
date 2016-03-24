@@ -2,12 +2,12 @@
 
 #include "ImageProcessor.h"
 
-int genrateRawImageOfProblem1(BYTE rawArray[HEIGHT][WIDTH], const char* rawFileName) {
+int genrateRAWofProblem1(const char* rawFileName, BYTE rawArray[HEIGHT][WIDTH]) {
 
-	BYTE brtArr[WIDTH];
+	BYTE brtArr[WIDTH];		// brightness array
 	int i, j;
 
-	fillWithBrightnessOfProblem1(brtArr);
+	getBrightnessOfProblem1(brtArr);
 
 	for (i = 0; i < WIDTH; i++) {		// width
 		for (j = 0; j < HEIGHT; j++) {	// height
@@ -15,10 +15,10 @@ int genrateRawImageOfProblem1(BYTE rawArray[HEIGHT][WIDTH], const char* rawFileN
 		}
 	}
 
-	return writeToRAW(rawFileName, (BYTE*)rawArray, WIDTH * HEIGHT);
+	return writeRAW(rawFileName, (BYTE*)rawArray, HEIGHT * WIDTH);
 }
 
-void fillWithBrightnessOfProblem1(BYTE brightnessArray[]) {
+void getBrightnessOfProblem1(BYTE brightnessArray[]) {
 
 	int i = 0;
 

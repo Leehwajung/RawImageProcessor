@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-int writeToRAW(const char* rawFileName, BYTE rawArray[], unsigned int arrSize) {
+int writeRAW(const char* rawFileName, const BYTE rawArray[], const unsigned int rawArraySize) {
 
 	FILE *ofp;
 	unsigned int i;
@@ -15,7 +15,7 @@ int writeToRAW(const char* rawFileName, BYTE rawArray[], unsigned int arrSize) {
 	}
 
 	// Write raw image
-	for (i = 0; i < arrSize; i++) {
+	for (i = 0; i < rawArraySize; i++) {
 		fputc(rawArray[i], ofp);
 	}
 	
@@ -24,7 +24,7 @@ int writeToRAW(const char* rawFileName, BYTE rawArray[], unsigned int arrSize) {
 	return NORMFIN;
 }
 
-int getBMPHeader(const char* bmpFileName, 
+int readBMPHeader(const char* bmpFileName, 
 		LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, 
 		RGBQUAD bmpPalette[]) {
 
@@ -39,7 +39,7 @@ int getBMPHeader(const char* bmpFileName,
 	}
 
 	// Read BMP Header
-	errCode = readBMPHeader(ifp, bmpFileHeader, bmpInfoHeader, bmpPalette);
+	errCode = getBMPHeader(ifp, bmpFileHeader, bmpInfoHeader, bmpPalette);
 
 	fclose(ifp);
 
@@ -67,17 +67,18 @@ int convertRAWtoBMP(const char* rawFileName,  const char* bmpFileName,
 	}
 
 	// Read raw image data
+	pixelData = malloc(bmpInfoHeader->biSizeImage);
 	pixelBufSize = bmpInfoHeader->biBitCount / 8;
 	pixelBufSize = pixelBufSize >= 1 ? pixelBufSize : 1;
-	pixelData = malloc(pixelBufSize * bmpInfoHeader->biSizeImage);
+	
 	for (i = bmpInfoHeader->biHeight - 1; i >= 0; i--) {	// Up-down reverse
-		fread_s(&pixelData[i * pixelBufSize * bmpInfoHeader->biWidth], 
-			pixelBufSize * bmpInfoHeader->biWidth, pixelBufSize, bmpInfoHeader->biWidth, ifp);
+		fread_s(&pixelData[i * bmpInfoHeader->biWidth * pixelBufSize],
+			bmpInfoHeader->biWidth * pixelBufSize, pixelBufSize, bmpInfoHeader->biWidth, ifp);
 	}
 	fclose(ifp);
 
 	// Write bmp image
-	errCode = writeBMPHeader(ofp, bmpFileHeader, bmpInfoHeader, bmpPalette);
+	errCode = putBMPHeader(ofp, bmpFileHeader, bmpInfoHeader, bmpPalette);
 	if (!errCode) {
 		fwrite(pixelData, pixelBufSize, bmpInfoHeader->biSizeImage, ofp);
 	}
@@ -94,7 +95,7 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	BITMAPFILEHEADER bfh;	// Bitmap File Header
 	BITMAPINFOHEADER bih;	// Bitmap Info Header
 	RGBQUAD pal[256];		// Palette
-	BYTE *pixelData;
+	BYTE *pixelData;		// Pixel Data
 
 	FILE *ifp, *ofp;
 	LONG tmpWidth;
@@ -108,7 +109,7 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	}
 
 	// Read source BMP header
-	errCode = readBMPHeader(ifp, &bfh, &bih, pal);
+	errCode = getBMPHeader(ifp, &bfh, &bih, pal);
 	if (errCode) {
 		fclose(ifp);
 		return errCode;
@@ -119,8 +120,8 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	}
 
 	// Rotate BMP image clockwise
+	pixelData = malloc(bih.biSizeImage);
 	pixelBufSize = bih.biBitCount / 8;
-	pixelData = malloc(pixelBufSize * bih.biSizeImage);
 
 	tmpWidth = bih.biWidth;
 	bih.biWidth = bih.biHeight;
@@ -141,7 +142,7 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	}
 
 	// Write destination bmp image
-	errCode = writeBMPHeader(ofp, &bfh, &bih, pal);	// Set BMP Header
+	errCode = putBMPHeader(ofp, &bfh, &bih, pal);	// Set BMP Header
 	if (!errCode) {
 		fwrite(pixelData, pixelBufSize, bih.biSizeImage, ofp);
 	}
@@ -153,7 +154,7 @@ int rotateBMP(const char* srcFileName, const char* dstFileName) {
 	return errCode;
 }
 
-int readBMPHeader(FILE* bmpFilePointer,
+int getBMPHeader(FILE* bmpFilePointer,
 		LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, 
 		RGBQUAD bmpPalette[]) {
 
@@ -169,7 +170,7 @@ int readBMPHeader(FILE* bmpFilePointer,
 	fread_s(bmpFileHeader, sizeof(BITMAPFILEHEADER), 
 		sizeof(BITMAPFILEHEADER), 1, bmpFilePointer);	// Read file header
 	if (bmpFileHeader->bfType != MAGICNUM) {	// Check magic number
-		return MGNNULL;
+		return MGNBERR;
 	}
 
 	fread_s(bmpInfoHeader, sizeof(BITMAPINFOHEADER), 
@@ -188,7 +189,7 @@ int readBMPHeader(FILE* bmpFilePointer,
 	return NORMFIN;
 }
 
-int writeBMPHeader(FILE* bmpFilePointer,
+int putBMPHeader(FILE* bmpFilePointer,
 		const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, 
 		const RGBQUAD bmpPalette[]) {
 
@@ -202,7 +203,7 @@ int writeBMPHeader(FILE* bmpFilePointer,
 
 	// write header to bmp file
 	if (bmpFileHeader->bfType != MAGICNUM) {	// Check magic number
-		return MGNNULL;
+		return MGNBERR;
 	}
 	fwrite(bmpFileHeader, sizeof(BYTE), 
 		sizeof(BITMAPFILEHEADER), bmpFilePointer); // Write file header

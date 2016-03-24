@@ -7,17 +7,28 @@
 
 // Prototypes
 /**
+ * Generate a 512¡¿512 raw image, each row of which is a smooth ramp r(n) as shown in the figure of Problem 1.
+ * 
  * ### CAUTION ###
- *	Width size of rawArray must be greater than or equal to 512!
- *
+ *	WIDTH size of rawArray must be greater than or equal to 512!
+ * 
+ * ### param ###
+ *	rawFileName: output file name (RAW)
+ *	rawArray: (OUT PARAM) brightness pixel data of the Problem 1 (BYTE)
+ * 
  * ### return ###
  *	NORMFIN(0): normal finish
  *	FPNULL1(1): file open error
  */
-int genrateRawImageOfProblem1(BYTE rawArray[HEIGHT][WIDTH], const char* rawFileName);
+int genrateRAWofProblem1(const char* rawFileName, BYTE rawArray[HEIGHT][WIDTH]);
 
 /**
+ * Get brightness values[r(n)] as shown in the figure of Problem 1.
+ * 
  * ### CAUTION ###
  *	Size of brightnessArray must be greater than or equal to 512!
+ * 
+ * ### param ###
+ *	brightnessArray: (OUT PARAM) brightness values of the Problem 1 (BYTE)
  */
-void fillWithBrightnessOfProblem1(BYTE brightnessArray[]);
+void getBrightnessOfProblem1(BYTE brightnessArray[]);
