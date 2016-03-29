@@ -21,14 +21,14 @@
  * 
  * ### param ###
  *	rawFileName: output file name (RAW)
- *	rawArray: array of brightness pixel data (BYTE)
- *	rawArraySize: size of rawArray (width * height)
+ *	pixelData: array of brightness pixel data (BYTE)
+ *	pixelDataSize: size of pixelData (width * height)
  * 
  * ### return ###
  *	NORMFIN(0): normal finish
  *	FPNULL1(1): file open error
  */
-int writeRAW(const char* rawFileName, const BYTE rawArray[], const unsigned int rawArraySize);
+int writeRAW(const char* rawFileName, const BYTE pixelData[], const unsigned int pixelDataSize);
 
 /**
  * Read a BMP header from the BMP image.
@@ -48,6 +48,26 @@ int writeRAW(const char* rawFileName, const BYTE rawArray[], const unsigned int 
  *	MGNBERR(8): magic number error (NOT 0x4D42)
  */
 int readBMPHeader(const char* bmpFileName, LPBITMAPFILEHEADER bmpFileHeader, LPBITMAPINFOHEADER bmpInfoHeader, RGBQUAD bmpPalette[256]);
+
+/**
+ * Write a BMP image from BMP header and byte array.
+ *
+ * ### param ###
+ *	bmpFileName: output file name (BMP)
+ *	bmpFileHeader: bitmap file header 
+ *	bmpInfoHeader: bitmap info header
+ *	bmpPalette: bitmap palette (NULL is possible if bmpInfoHeader has more than 8-bit colors.)
+ *	pixelData: array of pixel data (BYTE)
+ * 
+ * ### return ###
+ *	NORMFIN(0): normal finish
+ *	FPNULL1(1): file open error
+ *	BFHNULL(4): bmpFileHeader is NULL
+ *	BIHNULL(5): bmpInfoHeader is NULL
+ *	PALNULL(6): bmpPalette is NULL, though bmpInfoHeader has less than 8-bit colors
+ *	MGNBERR(8): magic number error (NOT 0x4D42)
+ */
+int writeBMP(const char* bmpFileName, const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, const RGBQUAD bmpPalette[], const BYTE pixelData[]);
 
 /**
  * Convert the RAW image to a BMP image.
@@ -81,7 +101,7 @@ int convertRAWtoBMP(const char* rawFileName, const char* bmpFileName, const LPBI
  *	NORMFIN(0): normal finish
  *	FPNULL1(1): source file open error
  *	FPNULL2(2): destination file open error
- *	MGNBERR(8): not bmp file (magic number error, NOT 0x4D42)
+ *	MGNBERR(8): not BMP image file (magic number error, NOT 0x4D42)
  *	NOTSPRT(16): not support 1-bit or 4-bits image
  */
 int rotateBMP(const char* srcFileName, const char* dstFileName);
@@ -121,3 +141,14 @@ int getBMPHeader(FILE* bmpFilePointer, LPBITMAPFILEHEADER bmpFileHeader, LPBITMA
  *	MGNBERR(8): magic number error (NOT 0x4D42)
  */
 int putBMPHeader(FILE* bmpFilePointer, const LPBITMAPFILEHEADER bmpFileHeader, const LPBITMAPINFOHEADER bmpInfoHeader, const RGBQUAD bmpPalette[]);
+
+/**
+ * Get pixel buffer size (bits) from pixel byte size for file read or write.
+ * 
+ * ### param ###
+ *	bitCount: pixel byte size
+ * 
+ * ### return ###
+ *	pixel buffer size (bits)
+ */
+WORD getPixelBufSize(WORD bitCount);

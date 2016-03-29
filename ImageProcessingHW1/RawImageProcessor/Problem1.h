@@ -7,7 +7,7 @@
 
 // Prototypes
 /**
- * Generate a 512¡¿512 raw image, each row of which is a smooth ramp r(n) as shown in the figure of Problem 1.
+ * Generate a 512*512 RAW image, each row of which is a smooth ramp r(n) as shown in the figure of Problem 1.
  * 
  * ### CAUTION ###
  *	WIDTH size of rawArray must be greater than or equal to 512!

@@ -16,7 +16,7 @@ int main(void) {
 	RGBQUAD pal[256];			// Palette
 	int errCode = 0;
 
-	/*** 1. Generate a 512¡¿512 RAW image. ***/
+	/*** 1. Generate a 512*512 RAW image. ***/
 	errCode = genrateRAWofProblem1(RAWFILENAME, rawArr);
 	if (errCode) {
 		fprintf_s(stderr, "genrateRAWofProblem1() error [code: %d]\n", errCode);
